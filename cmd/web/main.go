@@ -34,12 +34,16 @@ func main() {
 		fmt.Println("Cannot create template cache")
 	}
 	app.TemplateCache = tc
-	app.UseCache = true
+	if app.InProduction {
+		app.UseCache = true
+	} else {
+		app.UseCache = false
+	}
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
 
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 

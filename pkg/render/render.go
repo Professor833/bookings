@@ -10,21 +10,24 @@ import (
 
 	"github.com/Professor833/bookings/pkg/config"
 	"github.com/Professor833/bookings/pkg/models"
+	"github.com/justinas/nosurf"
 )
 
 var app *config.AppConfig
 
-// NewTemplates sets the config for the template package
-func NewTemplates(a *config.AppConfig) {
+// NewRenderer sets the config for the template package
+func NewRenderer(a *config.AppConfig) {
 	app = a
 }
 
 // AddDefaultData adds default data to the templateData
-func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
+	log.Println("td.CSRFToken >> ", td.CSRFToken)
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	// get the template cache from the app config
@@ -44,9 +47,9 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.Tem
 	buf := new(bytes.Buffer) // create a buffer to hold the template
 
 	// add default data to the templateData
-	templateData = AddDefaultData(templateData)
+	td = AddDefaultData(td, r)
 
-	_ = t.Execute(buf, templateData) // execute the template
+	_ = t.Execute(buf, td) // execute the template
 
 	// render the template
 	_, err := buf.WriteTo(w)
@@ -55,6 +58,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.Tem
 	}
 }
 
+// CreateTemplateCache creates a template cache as a map
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	// myCache := make(map[string]*template.Template)
 	myCache := map[string]*template.Template{}
