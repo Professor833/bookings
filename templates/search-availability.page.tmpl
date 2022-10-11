@@ -1,4 +1,4 @@
-{{template "base"}}
+{{template "base" .}}
 
 {{define "content"}}
 <div class="container-fluid">
@@ -14,9 +14,8 @@
             novalidate
             class="needs-validation"
           >
-          <input type="text" type="text" name="csrf_token" value="{{.CSRFToken}}">
+          <input type="text" type="text" name="csrf_token" value="{{.CSRFToken}}" hidden>
             <!-- Date Range Picker -->
-            <p>{{.CSRFToken}}</p>
             <div class="form-row">
               <div class="col">
                 <div class="form-row" id="reservation-dates">

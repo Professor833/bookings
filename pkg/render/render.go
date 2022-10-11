@@ -23,7 +23,6 @@ func NewRenderer(a *config.AppConfig) {
 // AddDefaultData adds default data to the templateData
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	td.CSRFToken = nosurf.Token(r)
-	log.Println("td.CSRFToken >> ", td.CSRFToken)
 	return td
 }
 

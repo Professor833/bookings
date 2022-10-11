@@ -1,4 +1,4 @@
-{{template "base"}}
+{{template "base" .}}
 
 {{define "content"}}
 <div class="container-fluid">
@@ -41,9 +41,11 @@
 
 {{ end }}
 {{define "js"}}
-  <script>
-     document.getElementById("check-availability-btn").addEventListener("click", function () {
-          let html = `
+<script>
+  document
+    .getElementById("check-availability-btn")
+    .addEventListener("click", function () {
+      let html = `
           <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
               <div class="form-row">
                   <div class="col">
@@ -58,10 +60,21 @@
                   </div>
               </div>
           </form>`;
-          attention.custom({
-            title: "Choose your dates",
-            msg: html
-          });
-        });
-  </script>
+      attention.custom({
+        title: "Choose your dates",
+        msg: html,
+        callback: function (result) {
+          // console.log('callback', result);
+          fetch("/search-availability-json")
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log("err >> ", err);
+            });
+        }
+      });
+    });
+</script>
 {{ end }}
