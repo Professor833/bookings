@@ -47,28 +47,46 @@
     .addEventListener("click", function () {
       let html = `
           <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
+            <input type="text" type="text" name="csrf_token" value="{{.CSRFToken}}" hidden>
               <div class="form-row">
                   <div class="col">
                       <div class="form-row" id="reservation-dates-modal">
                           <div class="col">
-                              <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+                              <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival" autocomplete="off">
                           </div>
                           <div class="col">
-                              <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+                              <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure" autocomplete="false">
                           </div>
                       </div>
                   </div>
               </div>
           </form>`;
+
       attention.custom({
         title: "Choose your dates",
         msg: html,
+        willOpen: () => {
+          const elem = document.getElementById("reservation-dates-modal");
+          const rp = new DateRangePicker(elem, {
+            format: "yyyy-mm-dd",
+            showOnFocus: true
+          });
+        },
+        didOpen: () => {
+          document.getElementById("start").removeAttribute("disabled");
+          document.getElementById("end").removeAttribute("disabled");
+        },
         callback: function (result) {
-          // console.log('callback', result);
-          fetch("/search-availability-json")
+          let form = document.getElementById("check-availability-form");
+          let formData = new FormData(form);
+          formData.append("csrf_token", "{{ .CSRFToken }}");
+          fetch("/search-availability-json", {
+            method: "post",
+            body: formData
+          })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
+              console.log("data >> ", data);
             })
             .catch((err) => {
               console.log("err >> ", err);

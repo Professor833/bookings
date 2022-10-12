@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Professor833/bookings/pkg/config"
-	"github.com/Professor833/bookings/pkg/models"
-	"github.com/Professor833/bookings/pkg/render"
+	"github.com/Professor833/bookings/internal/config"
+	"github.com/Professor833/bookings/internal/models"
+	"github.com/Professor833/bookings/internal/render"
 )
 
 // Repo the repository used by the handlers
@@ -93,7 +93,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	log.Println(string(out))
+	// log.Println(string(out))
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(out)
 }
